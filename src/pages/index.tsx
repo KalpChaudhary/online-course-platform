@@ -6,25 +6,22 @@ import {
   AppShell,
   Navbar,
   Header,
-  Footer,
-  Aside,
   Text,
-  MediaQuery,
-  Burger,
   useMantineTheme,
   Group,
   ActionIcon,
   useMantineColorScheme,
-  Box,
-  rem,
+  Avatar,
 } from "@mantine/core";
+import { MainLinks } from "~/components/shell/_mainLinks";
+import { User } from "~/components/shell/_user";
 
 const Home: NextPage = () => {
   const theme = useMantineTheme();
-  const [opened, setOpened] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  // const dark = colorScheme === 'dark';
+
 
   return (
     <>
@@ -46,12 +43,13 @@ const Home: NextPage = () => {
           navbarOffsetBreakpoint="sm"
           asideOffsetBreakpoint="sm"
           navbar={
-            <Navbar height={600} p="xs" width={{ base: 300 }}>
-              <Navbar.Section mt="xs">Brand</Navbar.Section>
+            <Navbar p="xs" width={{ base: 300 }}>
               <Navbar.Section grow mt="md">
-                MainLinks
+                <MainLinks />
               </Navbar.Section>
-              <Navbar.Section>User</Navbar.Section>
+              <Navbar.Section>
+                <User />
+              </Navbar.Section>
             </Navbar>
           }
           header={
