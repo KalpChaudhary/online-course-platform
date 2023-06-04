@@ -1,11 +1,13 @@
-import React from 'react';
+import React from "react";
 import {
   IconGitPullRequest,
   IconAlertCircle,
   IconMessages,
   IconDatabase,
-} from '@tabler/icons-react';
-import { ThemeIcon, UnstyledButton, Group, Text } from '@mantine/core';
+  IconPencil,
+  IconChartLine,
+} from "@tabler/icons-react";
+import { ThemeIcon, UnstyledButton, Group, Text } from "@mantine/core";
 
 interface MainLinkProps {
   icon: React.ReactNode;
@@ -17,15 +19,18 @@ function MainLink({ icon, color, label }: MainLinkProps) {
   return (
     <UnstyledButton
       sx={(theme) => ({
-        display: 'block',
-        width: '100%',
+        display: "block",
+        width: "100%",
         padding: theme.spacing.xs,
         borderRadius: theme.radius.sm,
-        color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+        color:
+          theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
 
-        '&:hover': {
+        "&:hover": {
           backgroundColor:
-            theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[6]
+              : theme.colors.gray[0],
         },
       })}
     >
@@ -41,10 +46,8 @@ function MainLink({ icon, color, label }: MainLinkProps) {
 }
 
 const data = [
-  { icon: <IconGitPullRequest size="1rem" />, color: 'blue', label: 'Pull Requests' },
-  { icon: <IconAlertCircle size="1rem" />, color: 'teal', label: 'Open Issues' },
-  { icon: <IconMessages size="1rem" />, color: 'violet', label: 'Discussions' },
-  { icon: <IconDatabase size="1rem" />, color: 'grape', label: 'Databases' },
+  { icon: <IconPencil size="1rem" />, color: "blue", label: "Manage Course" },
+  { icon: <IconChartLine size="1rem" />, color: "teal", label: "Analytics" },
 ];
 
 export function MainLinks() {
