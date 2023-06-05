@@ -52,9 +52,9 @@ export function User() {
         >
           <Menu shadow="md" width={200}>
             <Menu.Target>
-              <Group>
+              <Group spacing="sm">
                 <Avatar
-                imageProps={{referrerPolicy: "no-referrer"}}
+                  imageProps={{ referrerPolicy: "no-referrer" }}
                   src={user.data.user.image}
                   radius="xl"
                 />

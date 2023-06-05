@@ -1,28 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import { IconSun, IconMoonStars } from "@tabler/icons-react";
-import {
-  AppShell,
-  Navbar,
-  Header,
-  Text,
-  useMantineTheme,
-  Group,
-  ActionIcon,
-  useMantineColorScheme,
-  Avatar,
-} from "@mantine/core";
-import { MainLinks } from "~/components/shell/_mainLinks";
-import { User } from "~/components/shell/_user";
+import AdminDashboardLayout from "~/components/layouts/admin-dashboard-layout";
 
 const Home: NextPage = () => {
-  const theme = useMantineTheme();
-
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
-
   return (
     <>
       <Head>
@@ -31,48 +11,12 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <AppShell
-          styles={{
-            main: {
-              background:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[8]
-                  : theme.colors.gray[0],
-            },
-          }}
-          navbarOffsetBreakpoint="sm"
-          asideOffsetBreakpoint="sm"
-          navbar={
-            <Navbar p="xs" width={{ base: 300 }}>
-              <Navbar.Section grow mt="md">
-                <MainLinks />
-              </Navbar.Section>
-              <Navbar.Section>
-                <User />
-              </Navbar.Section>
-            </Navbar>
-          }
-          header={
-            <Header height={60}>
-              <Group sx={{ height: "100%" }} px={20} position="apart">
-                Logo
-                <ActionIcon
-                  variant="default"
-                  onClick={() => toggleColorScheme()}
-                  size={30}
-                >
-                  {colorScheme === "dark" ? (
-                    <IconSun size="1rem" />
-                  ) : (
-                    <IconMoonStars size="1rem" />
-                  )}
-                </ActionIcon>
-              </Group>
-            </Header>
-          }
-        >
-          <Text>Resize app to see responsive navbar in action</Text>
-        </AppShell>{" "}
+        <AdminDashboardLayout>
+          {/* <Courses /> */}
+          <div>
+            <h1>Dashboard</h1>
+          </div>
+        </AdminDashboardLayout>
       </main>
     </>
   );
