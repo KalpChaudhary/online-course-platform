@@ -8,6 +8,7 @@ import {
 import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
+// import { db } from "~/server/db";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -36,6 +37,11 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  // huh any! I know.
+  // This is a temporary fix for prisma client.
+  // @see https://github.com/prisma/prisma/issues/16117
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
   callbacks: {
     session: ({ session, user }) => ({
       ...session,

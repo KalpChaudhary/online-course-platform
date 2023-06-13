@@ -16,9 +16,24 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      console.log("newCourse", newCourse);
+      // console.log("newCourse", newCourse);
 
       // return true;
       return newCourse;
     }),
+  getCourses: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    // const user = ctx.session.user;
+
+    const courses = await ctx.prisma.course.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    // console.log("newCourse", newCourse);
+
+    // return true;
+    return courses;
+  }),
 });

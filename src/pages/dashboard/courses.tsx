@@ -8,6 +8,8 @@ import {
   Button,
   Modal,
   TextInput,
+  Textarea,
+  Stack,
 } from "@mantine/core";
 import { type NextPage } from "next";
 import Head from "next/head";
@@ -18,46 +20,12 @@ import { useForm } from "@mantine/form";
 import { api } from "~/utils/api";
 
 const Courses: NextPage = () => {
-  const courses: Course[] = [
-    {
-      //generate random 32bit encrypted id
-      id: " 1",
-      title: "JavaScript",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum!",
-      userId: "123",
-    },
-    {
-      //generate random 32bit encrypted id
-      id: " 2",
-      title: "Advance CSS",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum!",
-      userId: "12ADASF34",
-    },
-    {
-      //generate random 32bit encrypted id
-      id: " 3",
-      title: "Advance SASS",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum!",
-      userId: "12SDFF34",
-    },
-    {
-      //generate random 32bit encrypted id
-      id: " 4",
-      title: "React Js",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum!",
-      userId: "123ADSD4",
-    },
-  ];
 
   const [
     isCreateCourseModalOpen,
     { open: createCourseModalOpen, close: createCourseModalClose },
   ] = useDisclosure(false);
-
+  
   //initial form values
   const createCourseForm = useForm({
     initialValues: {
@@ -65,9 +33,14 @@ const Courses: NextPage = () => {
       description: "",
     },
   });
-
+  
   // trpc api calls
+  // get courses
+  const courses = api.course.getCourses.useQuery();
+  // create course
   const createCourseMutations = api.course.createCourse.useMutation();
+
+
 
   return (
     <>
@@ -86,21 +59,26 @@ const Courses: NextPage = () => {
           onSubmit={createCourseForm.onSubmit(async (values) => {
             await createCourseMutations.mutateAsync(values);
             createCourseModalClose();
+            createCourseForm.reset();
+            await courses.refetch();
           })}
         >
-          <TextInput
-            label="Title"
-            placeholder="Name your course here"
-            {...createCourseForm.getInputProps("title")}
-            required
-          />
-          <TextInput
-            mt="md"
-            label="Description"
-            placeholder="Write some description about your course"
-            {...createCourseForm.getInputProps("description")}
-            required
-          />
+          <Stack>
+            <TextInput
+              label="Title"
+              placeholder="Name your course here"
+              {...createCourseForm.getInputProps("title")}
+              required
+            />
+            <Textarea
+              mt="md"
+              minRows={6}
+              label="Description"
+              placeholder="Write some description about your course"
+              {...createCourseForm.getInputProps("description")}
+              required
+            />
+          </Stack>
 
           <Group position="right" mt="md">
             <Button type="submit">Submit</Button>
@@ -116,9 +94,9 @@ const Courses: NextPage = () => {
             <Button onClick={createCourseModalOpen}>Create Course</Button>
           </Group>
 
-          <Grid>
-            {courses.map((course) => (
-              <Grid.Col sm={6} md={4} lg={4} key={course.id}>
+          <Grid >
+            {courses.data?.map((course) => (
+              <Grid.Col  sm={6} md={4} lg={4} key={course.id}>
                 <CourseCard course={course} />
               </Grid.Col>
             ))}

@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import AdminDashboardLayout from "~/components/layouts/admin-dashboard-layout";
 
 const Home: NextPage = () => {
   return (
@@ -11,12 +10,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <AdminDashboardLayout>
-          {/* <Courses /> */}
-          <div>
-            <h1>Dashboard</h1>
-          </div>
-        </AdminDashboardLayout>
+        <div>
+          <h1>Landing Page</h1>
+        </div>
       </main>
     </>
   );
