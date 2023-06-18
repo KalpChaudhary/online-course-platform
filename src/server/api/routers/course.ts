@@ -36,4 +36,49 @@ export const courseRouter = createTRPCRouter({
     // return true;
     return courses;
   }),
+  getCourseById: protectedProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const course = await ctx.prisma.course.findUnique({
+        where: {
+          id: input.courseId,
+        },
+      });
+
+      console.log("newCourse", course);
+
+      // return true;
+      return course;
+    }),
+  updateCourse: protectedProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+        title: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      await ctx.prisma.course.updateMany({
+        where: {
+          id: input.courseId,
+          userId: userId,
+        },
+        data: {
+          title: input.title,
+        },
+      });
+
+      // return true;
+      return {
+        success: true,
+      };
+    }),
+
+  //define updateCourse Route and update value which is passed in the input else return original value
 });
