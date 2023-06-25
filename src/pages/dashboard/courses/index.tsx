@@ -19,6 +19,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { api } from "~/utils/api";
 import Link from "next/link";
+import { getImageUrl } from "~/utils/getImageUrl";
 
 const Courses: NextPage = () => {
   const [
@@ -89,7 +90,9 @@ const Courses: NextPage = () => {
 
           <Group position="apart">
             <h1>Manage Course</h1>
-            <Button onClick={createCourseModalOpen}>Create Course</Button>
+            <Button variant="light" onClick={createCourseModalOpen}>
+              Create Course
+            </Button>
           </Group>
 
           <Grid>
@@ -117,9 +120,14 @@ const CourseCard = ({ course }: { course: Course }) => {
       <MantineCard shadow="sm" padding="lg" radius="md" withBorder>
         <MantineCard.Section>
           <Image
-            src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+            src={
+              course.imageId
+                ? getImageUrl(course.imageId)
+                : "https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+            }
             height={160}
             alt="Norway"
+            withPlaceholder
           />
         </MantineCard.Section>
 

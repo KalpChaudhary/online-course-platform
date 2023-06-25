@@ -4,9 +4,46 @@ import AdminDashboardLayout from "~/components/layouts/admin-dashboard-layout";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { IconCheck, IconEdit, IconX } from "@tabler/icons-react";
-import { Group, ActionIcon, TextInput, Title } from "@mantine/core";
+import {
+  Group,
+  ActionIcon,
+  TextInput,
+  Title,
+  Stack,
+  FileInput,
+  Button,
+  Image,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
+import { useState } from "react";
+import { getImageUrl } from "~/utils/getImageUrl";
+
+async function uploadFileToS3({
+  getPresignedUrl,
+  file,
+}: {
+  getPresignedUrl: () => Promise<{
+    url: string;
+    fields: Record<string, string>;
+  }>;
+  file: File;
+}) {
+  const { url, fields } = await getPresignedUrl();
+  const data: Record<string, any> = {
+    ...fields,
+    "Content-Type": file.type,
+    file,
+  };
+  const formData = new FormData();
+  for (const name in data) {
+    formData.append(name, data[name]);
+  }
+  await fetch(url, {
+    method: "POST",
+    body: formData,
+  });
+}
 
 const Courses: NextPage = () => {
   const [isEditingTitle, { open: setEditTitle, close: unSetEditTitle }] =
@@ -36,8 +73,33 @@ const Courses: NextPage = () => {
   );
 
 
-  //updating course title 
+  //updating course title
   const updateCourseMutation = api.course.updateCourse.useMutation();
+
+  // creating presigned url for uploading file to s3
+  const createPresignedUrlMutation =
+    api.course.createPresignedUrl.useMutation();
+
+  const [file, setFile] = useState<File | null>(null);
+
+  //uploading file to s3
+  const uploadImage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!file) return;
+    await uploadFileToS3({
+      getPresignedUrl: () =>
+        createPresignedUrlMutation.mutateAsync({
+          courseId,
+        }),
+      file,
+    });
+    setFile(null);
+    await courseQuery.refetch();
+
+    // if (fileRef.current) {
+    //   fileRef.current.value = "";
+    // }
+  };
 
   return (
     <>
@@ -48,53 +110,84 @@ const Courses: NextPage = () => {
       </Head>
       <main>
         <AdminDashboardLayout>
-          {isEditingTitle ? (
-            <form
-              onSubmit={updateTitleForm.onSubmit(async (values) => {
-                await updateCourseMutation.mutateAsync({
-                  ...values,
-                  courseId,
-                });
-                unSetEditTitle();
-                await courseQuery.refetch();
-              })}
-            >
-              <Group spacing="md">
-                <TextInput
-                  placeholder="Name your course here"
-                  {...updateTitleForm.getInputProps("title")}
-                  required
-                />
-                <ActionIcon
-                  type="submit"
-                  variant="light"
-                  color="green"
-                  size="lg"
-                >
-                  <IconCheck size={"1rem"} />
-                </ActionIcon>
-                <ActionIcon
-                  onClick={unSetEditTitle}
-                  variant="light"
-                  color="red"
-                  size="lg"
-                >
-                  <IconX size={"1rem"} />
+          <Stack spacing="xl">
+            {isEditingTitle ? (
+              <form
+                onSubmit={updateTitleForm.onSubmit(async (values) => {
+                  await updateCourseMutation.mutateAsync({
+                    ...values,
+                    courseId,
+                  });
+                  unSetEditTitle();
+                  await courseQuery.refetch();
+                })}
+              >
+                <Group spacing="md">
+                  <TextInput
+                    placeholder="Name your course here"
+                    {...updateTitleForm.getInputProps("title")}
+                    required
+                  />
+                  <ActionIcon
+                    type="submit"
+                    variant="light"
+                    color="green"
+                    size="lg"
+                  >
+                    <IconCheck size={"1rem"} />
+                  </ActionIcon>
+                  <ActionIcon
+                    onClick={unSetEditTitle}
+                    variant="light"
+                    color="red"
+                    size="lg"
+                  >
+                    <IconX size={"1rem"} />
+                  </ActionIcon>
+                </Group>
+              </form>
+            ) : (
+              <Group spacing={"md"}>
+                <Title>{courseQuery.data?.title}</Title>
+                <ActionIcon onClick={setEditTitle} variant="light" size="lg">
+                  <IconEdit size={"1rem"} />
                 </ActionIcon>
               </Group>
-            </form>
-          ) : (
-            <Group spacing={"md"}>
-              <Title>{courseQuery.data?.title}</Title>
-              <ActionIcon onClick={setEditTitle} variant="light" size="lg">
-                <IconEdit size={"1rem"} />
-              </ActionIcon>
+            )}
+            <Group>
+              {courseQuery.data && (
+                <Image
+                  width="200"
+                  alt="an image of the course"
+                  src={getImageUrl(courseQuery.data.imageId)}
+                  withPlaceholder 
+                />
+              )}
+              <Stack sx={{ flex: 1 }}>
+                <form onSubmit={uploadImage}>
+                  <FileInput
+                    label="Course Image"
+                    onChange={setFile}
+                    value={file}
+                  />
+
+                  <Button
+                    disabled={!file}
+                    type="submit"
+                    variant="light"
+                    color="blue"
+                    mt="md"
+                    radius="md"
+                  >
+                    Upload Image
+                  </Button>
+                </form>
+              </Stack>
             </Group>
-          )}
+          </Stack>
         </AdminDashboardLayout>
       </main>
     </>
   );
 };
-
 export default Courses;

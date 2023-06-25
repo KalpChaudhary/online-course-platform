@@ -20,6 +20,9 @@ const config = {
   },
   images: {
     domains: ["googleusercontent.com"],
-  }
+  },
+  env: {
+    NEXT_PUBLIC_S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME || "",
+  },
 };
 export default config;
