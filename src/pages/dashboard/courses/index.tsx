@@ -18,14 +18,15 @@ import { type Course } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { api } from "~/utils/api";
+import Link from "next/link";
+import { getImageUrl } from "~/utils/getImageUrl";
 
 const Courses: NextPage = () => {
-
   const [
     isCreateCourseModalOpen,
     { open: createCourseModalOpen, close: createCourseModalClose },
   ] = useDisclosure(false);
-  
+
   //initial form values
   const createCourseForm = useForm({
     initialValues: {
@@ -33,14 +34,12 @@ const Courses: NextPage = () => {
       description: "",
     },
   });
-  
+
   // trpc api calls
   // get courses
   const courses = api.course.getCourses.useQuery();
   // create course
   const createCourseMutations = api.course.createCourse.useMutation();
-
-
 
   return (
     <>
@@ -91,12 +90,14 @@ const Courses: NextPage = () => {
 
           <Group position="apart">
             <h1>Manage Course</h1>
-            <Button onClick={createCourseModalOpen}>Create Course</Button>
+            <Button variant="light" onClick={createCourseModalOpen}>
+              Create Course
+            </Button>
           </Group>
 
-          <Grid >
+          <Grid>
             {courses.data?.map((course) => (
-              <Grid.Col  sm={6} md={4} lg={4} key={course.id}>
+              <Grid.Col sm={6} md={4} lg={4} key={course.id}>
                 <CourseCard course={course} />
               </Grid.Col>
             ))}
@@ -119,9 +120,14 @@ const CourseCard = ({ course }: { course: Course }) => {
       <MantineCard shadow="sm" padding="lg" radius="md" withBorder>
         <MantineCard.Section>
           <Image
-            src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+            src={
+              course.imageId
+                ? getImageUrl(course.imageId)
+                : "https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+            }
             height={160}
             alt="Norway"
+            withPlaceholder
           />
         </MantineCard.Section>
 
@@ -136,7 +142,15 @@ const CourseCard = ({ course }: { course: Course }) => {
           {course.description}
         </Text>
 
-        <Button variant="light" color="blue" fullWidth mt="md" radius="md">
+        <Button
+          component={Link}
+          href={`courses/${course.id}`}
+          variant="light"
+          color="blue"
+          fullWidth
+          mt="md"
+          radius="md"
+        >
           Manage
         </Button>
       </MantineCard>
